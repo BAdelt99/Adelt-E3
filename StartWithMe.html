@@ -1,0 +1,120 @@
+<html>
+    <head>
+        <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">        
+        
+        <style>
+            .bold
+            {
+                font-weight: bold;
+                color: blue;
+            }
+        </style>
+    </head>
+    
+    <body>
+        <div class="container">
+            
+            <!--form...-->
+            <h4>Paint Jobs</h4>
+            <form class="border border-primary p-3">
+                <div class="form-group">
+                    <label for="jobDesc">Job Description</label>
+                    <input type="text" class="form-control" id="jobDesc" name="jobDesc" placeholder="Job description">
+                </div>
+                <div class="form-group">
+                    <label for="sqFt">Sq Ft</label>
+                    <input type="number" class="form-control" id="sqFt" name="sqFt" placeholder="Total square feet to be painted">
+                </div>
+                <button id='btnSubmit' type="button" class="btn btn-primary float-right">Add Job</button>
+                <div class="clearfix"></div>
+            </form>  
+            
+            <p class = 'text-danger' id = 'ErrorMSG'></p>
+            
+            
+            <!--list group-->
+            <div class='p-2 bg-dark'>
+                <h5 class='text-light'>Jobs</h5>
+                <ul id='jobList' class="list-group">
+                </ul>            
+            </div>
+<p>Note: The cost assumes that a can of paint costs $10 per 100 square feet</p>
+        </div>
+        
+        <script src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.12.9/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
+        <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>        
+        
+        <!--put your modal dialogs here...-->
+        
+        <script>
+        /* global $ */
+        $(document).ready(function() 
+        {
+            // model ....
+            let model = {};
+
+            function initializeModel()
+            {
+                model.count = 0;
+                model.selected = -1;
+                model.jobs = [];
+                model.ErrorMSG = false;
+            }
+            
+            // view...
+            function updateView()
+            {
+                $('#ErrorMSG').empty();
+                
+                 if (model.ErrorMSG == true)
+                {
+                     $('#ErrorMSG').append('Please enter a description and number of square feet');
+                }
+                else
+                $('#jobList').empty();                
+                for (var i in model.jobs) 
+                {
+                    let item = $("<li></li>");
+                    item.attr("id", model.jobs[i].id);
+                    item.addClass("list-group-item");
+                    item.html("<span class='bold'>Description:</span> " + model.jobs[i].desc + 
+                              " <span class='bold'>Square Feet:</span> " + model.jobs[i].sqFt +
+                              " <span class='bold'>Cost:</span> $" + model.jobs[i].price);
+                    $('#jobList').append(item);
+                }
+                
+               
+            }            
+            
+            // controller ...
+            $('#btnSubmit').click(function() 
+            {
+                model.ErrorMSG = false;
+                let desc = $('#jobDesc').val().trim();
+                let sqFeet = $('#sqFt').val().trim();
+                
+                if ( sqFeet == "" || desc == "")
+                {
+                   model.ErrorMSG = true;
+                }
+                else
+                {
+                let price = parseInt(sqFeet);
+                price = (price/100)*10;
+               if(price % 10 != 0)
+               price = price + 10 - (price % 10);
+                model.jobs.push({ desc: desc, sqFt: sqFeet, price: price});
+                model.count = model.count+1;
+                }
+                updateView();
+            });
+            
+            // run...
+            initializeModel();
+            updateView();
+        });
+        
+        </script>
+    </body>
+</html>
